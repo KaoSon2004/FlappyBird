@@ -1,7 +1,11 @@
 #include "CommonFunction.h"
 #include "TextureManager.h"
 #include "Player.h"
+#include "WaterPile.h"
+
 TextureManager gBackGround;
+waterPile pile;
+
 bool Init()
 {
 	bool success = true;
@@ -43,6 +47,12 @@ bool LoadBackGround()
 	bool ret = gBackGround.LoadImg("background.png", gRenderer);
 	return ret;
 }
+bool LoadWaterPile()
+{
+	bool ret1 = pile.LoadImg("top.png", gRenderer);
+
+	return ret1;
+}
 void close ()
 {
 	SDL_DestroyRenderer(gRenderer);
@@ -58,12 +68,24 @@ int main(int argc, char* argv[])
 	{
 		return -1;
 	}
+
 	if (LoadBackGround()==false)
 	{
 		return -1;
 	}
+
 	Bird Player;
 	bool ret = Player.loadImg("bird.png", gRenderer);
+	if (ret == false)
+	{
+		return -1;
+	}
+	Player.SetRect(100, 100);
+	if (!LoadWaterPile())
+	{
+		return -1;
+	}
+	pile.Init();
 
 	bool quit = false;
 	const int FPS = 60;
@@ -73,27 +95,32 @@ int main(int argc, char* argv[])
 	while (!quit)
 	{
 		frameStart = SDL_GetTicks();
+		
 		while (SDL_PollEvent(&gEvent) != 0)
 		{
 			if (gEvent.type == SDL_QUIT)
 			{
 				quit = true;
 			}
+			Player.HandleInputAction(gEvent, gRenderer);
 
 		}
 		SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 		SDL_RenderClear(gRenderer);
 		gBackGround.Render(gRenderer, NULL);
- 		Player.HandleInputAction(gEvent, gRenderer);
+		Player.DoFalling(gRenderer);
 		Player.Show(gRenderer);
+		pile.loadWaterPile(gRenderer);
+		pile.DoRun(gRenderer);
+		pile.wUpdate(); 
 		SDL_RenderPresent(gRenderer);
-
-		//limit
 		frameTime = SDL_GetTicks() - frameStart;
 		if (frameDelay > frameTime)
 		{
 			SDL_Delay(frameDelay - frameTime);
 		}
+		//limit
+
 	}
 
 	close();

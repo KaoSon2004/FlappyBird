@@ -11,6 +11,7 @@ public:
 	void SetRect(int x, int y) { rect_.x = x, rect_.y = y; }
 	//SDL_Rect GetRect() { return rect_; }
 	bool LoadImg(string path, SDL_Renderer* screen);
-	void Render(SDL_Renderer* des, SDL_Rect* clip = NULL);
+	void Render(SDL_Renderer* des, SDL_Rect* clip=NULL);
 	void Free();
+
 };

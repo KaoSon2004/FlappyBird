@@ -1,11 +1,9 @@
 #include "Player.h"
 Bird::Bird()
 {
-	isFalling = false;
-	isDie = false;
-	yval = 1;
-	accelerate = 0;
-	gravity = 0.02;
+
+	
+
 }
 Bird::~Bird()
 {
@@ -13,23 +11,31 @@ Bird::~Bird()
 }
 void Bird::HandleInputAction(SDL_Event e, SDL_Renderer* screen)
 {
-	if (e.type == SDL_MOUSEBUTTONDOWN)
+	if (e.type == SDL_KEYDOWN)
 	{
-		if (isFalling == false)
+		switch (e.key.keysym.sym)
 		{
-			yval = -20;
+		case SDLK_UP:
+		{
+
+				yval = -15;
+				
+		}
 		}
 	}
-	else if (e.type == SDL_MOUSEBUTTONUP)
+	else if (e.type == SDL_KEYUP)
 	{
-		yval = 5;
-
-	}
-	else
-	{
-		Gravity();
+		switch (e.key.keysym.sym)
+		{
+		case SDLK_UP:
+		{
+			yval = 5;
+		}
+		break;
+		}
 	}
 }
+
 bool Bird::loadImg(string path, SDL_Renderer* des)
 {
 	SDL_Texture* newTexture = NULL;
@@ -61,10 +67,8 @@ void Bird::Free()
 		bird = NULL;
 	}
 }
-void Bird::Gravity()
+void Bird::DoFalling(SDL_Renderer* des)
 {
-	accelerate = accelerate + 0.035;
-	
-	birdrect.y = birdrect.y + gravity + accelerate ;
-	SetRect(birdrect.x, birdrect.y);
+	birdrect.y += yval;
+
 }

@@ -10,9 +10,16 @@ public:
 	void HandleInputAction(SDL_Event e, SDL_Renderer* screen);
 	void Free();
 	void Show(SDL_Renderer* des,SDL_Rect* clip=NULL);
-	void Gravity();
+
+
+	void DoFalling(SDL_Renderer* des);
+	bool GetFalling() const { return isFalling; }
+	void SetFalling(bool falling) { isFalling = falling; }
+	void DoGround(SDL_Renderer* screen);
+	bool GetIsDie() const { return isDie; }
 private:
 	// bước nhảy
+
 	float xval;
 	float yval;
 	//vị trí hiện tại
@@ -23,6 +30,5 @@ private:
 	SDL_Texture* bird;
 	SDL_Rect birdrect;
 
-	double accelerate;
-	double gravity;
+
 };

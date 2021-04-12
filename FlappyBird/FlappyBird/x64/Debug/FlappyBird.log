@@ -1,3 +1,2 @@
-﻿  player.cpp
-D:\FlappyBird\FlappyBird\player.cpp(68,36): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+﻿  main.cpp
   FlappyBird.vcxproj -> D:\FlappyBird\x64\Debug\FlappyBird.exe
