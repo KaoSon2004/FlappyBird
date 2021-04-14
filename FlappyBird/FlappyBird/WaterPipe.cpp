@@ -1,11 +1,9 @@
 #pragma once
 #include "WaterPile.h"
-static vector <position> posPile;
+
 
 waterPile::waterPile()
 {
-	xpos = 0;
-	ypos = 0;
 
 	wTexture = NULL;
 }
@@ -34,15 +32,13 @@ bool waterPile::LoadImg(string path, SDL_Renderer* screen)
 void waterPile::Init()
 {
 	srand(time(NULL));
-	int ran;
-	do
-	{
-		ran = rand() % 200;
-	} while (ran<50);
+	
+
 	for (int i = 0; i < TOTAL_PILE; ++i)
 	{
-		position k;
-		k.GetPos(  i * distance + 450, -200-ran);
+		SDL_Rect k;
+		SetPos( SCREEN_WIDTH+ i * distance + 450, -200-RanDom());
+		k = GetPos();
 		posPile.push_back(k);
 	}
 	
@@ -59,11 +55,20 @@ void waterPile::Free()
 }
 void waterPile::loadWaterPile(SDL_Renderer* screen)
 {
-	for (int i = 0; i < TOTAL_PILE; ++i)
+	
+	for (int i = 0; i < TOTAL_PILE;i++)
 	{
 		if (posPile[i].x <= SCREEN_WIDTH && posPile[i].x > -getWidth())
-			wRender(screen,posPile[i].x, posPile[i].y);
-		wRender(screen,posPile[i].x, posPile[i].y + getHeight() + space,180);
+		{
+			wRender(screen, posPile[i].x, posPile[i].y);
+			wRender(screen, posPile[i].x, posPile[i].y + getHeight() + space, 180);
+			 
+			
+		}
+		
+		
+	
+		
 	}
 	
 }
@@ -82,28 +87,39 @@ void waterPile::wRender(SDL_Renderer* screen,int x, int y, int angle, SDL_Rect* 
 }
 void waterPile::wUpdate()
 {
-	srand(time(NULL));
-	int ran;
-	do
-	{
-		ran = rand() % 200;
-	} while (ran < 50);
+	
 		for (int j = 0; j < TOTAL_PILE; ++j)
 		{
 			if (posPile[j].x < -getWidth())
 			{
-				posPile[j].y = -200-ran;
+
+				posPile[j].y = -200-RanDom(); 
+				SetYPos(posPile[j].y);
 				posPile[j].x = posPile[(j + TOTAL_PILE - 1) % TOTAL_PILE].x + distance;
 			}
 
 		}
 	
 }
-void waterPile::DoRun(SDL_Renderer* screen)
+void waterPile::DoRun(SDL_Rect player)
 {
 	for (int i = 0; i < TOTAL_PILE; i++)
 	{
 		posPile[i].x += xval;
+		SetXPos(posPile[i].x);
+		col = CheckCollision(player, wRect);
 	}
+
 	
+}
+int waterPile::RanDom()
+{
+	
+	int res = rand() % (250 - 10 + 1) + 10;
+	return res;
+}
+void waterPile::SetPos(int x, int y)
+{
+	wRect.x = x;
+	wRect.y = y;
 }

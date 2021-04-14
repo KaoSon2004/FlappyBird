@@ -11,29 +11,46 @@ Bird::~Bird()
 }
 void Bird::HandleInputAction(SDL_Event e, SDL_Renderer* screen)
 {
-	if (e.type == SDL_KEYDOWN)
-	{
-		switch (e.key.keysym.sym)
-		{
-		case SDLK_UP:
-		{
 
-				yval = -15;
-				
-		}
-		}
-	}
-	else if (e.type == SDL_KEYUP)
-	{
-		switch (e.key.keysym.sym)
+		if (e.type == SDL_KEYDOWN)
 		{
-		case SDLK_UP:
+			switch (e.key.keysym.sym)
+			{
+			case SDLK_UP:
+			{
+				if ((birdrect.y) <= 0)
+					yval = 5;
+				else
+				{
+					yval = -15;
+				}
+				
+
+			}
+			}
+
+		}
+		else if (e.type == SDL_KEYUP)
+		{
+			switch (e.key.keysym.sym)
+			{
+			case SDLK_UP:
+			{
+				yval = 5;
+	
+			}
+			break;
+			}
+		}
+		else 
 		{
 			yval = 5;
+
 		}
-		break;
-		}
-	}
+	
+	
+
+
 }
 
 bool Bird::loadImg(string path, SDL_Renderer* des)
@@ -69,6 +86,13 @@ void Bird::Free()
 }
 void Bird::DoFalling(SDL_Renderer* des)
 {
-	birdrect.y += yval;
+		birdrect.y += yval;
+		SetRect(birdrect.x, birdrect.y);
+		if (birdrect.y >= (SCREEN_HEIGHT - birdrect.h))
+			isDie = true;
 
 }
+
+
+
+

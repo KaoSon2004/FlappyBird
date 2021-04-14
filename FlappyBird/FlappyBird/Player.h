@@ -7,9 +7,11 @@ public:
 	~Bird();
 	bool loadImg(string path, SDL_Renderer* des);
 	void SetRect(int x, int y) { birdrect.x = x,birdrect.y = y; }
+	SDL_Rect GetRect() { return birdrect; }
 	void HandleInputAction(SDL_Event e, SDL_Renderer* screen);
 	void Free();
 	void Show(SDL_Renderer* des,SDL_Rect* clip=NULL);
+	bool CheckCollision(const SDL_Rect& object2);
 
 
 	void DoFalling(SDL_Renderer* des);
@@ -26,7 +28,7 @@ private:
 	float xpos;
 	float ypos;
 	bool isFalling;
-	bool isDie;
+	bool isDie = false;
 	SDL_Texture* bird;
 	SDL_Rect birdrect;
 

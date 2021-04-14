@@ -110,9 +110,19 @@ int main(int argc, char* argv[])
 		gBackGround.Render(gRenderer, NULL);
 		Player.DoFalling(gRenderer);
 		Player.Show(gRenderer);
+		SDL_Rect birdr = Player.GetRect();
+		if (Player.GetIsDie())
+			quit = true;
 		pile.loadWaterPile(gRenderer);
-		pile.DoRun(gRenderer);
+		pile.DoRun(birdr);
+		if (pile.GetCollisionState())
+			quit = true;
 		pile.wUpdate(); 
+		
+	
+			
+
+	
 		SDL_RenderPresent(gRenderer);
 		frameTime = SDL_GetTicks() - frameStart;
 		if (frameDelay > frameTime)

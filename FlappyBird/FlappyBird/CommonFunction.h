@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 #include <time.h>
+#include <cstdlib>
+#include <ctime> 
 using namespace std;
 
 
@@ -24,11 +26,5 @@ const int COLOR_KEY_G = 255;
 const int COLOR_KEY_B = 255;
 
 static int TOTAL_PILE = 3;
-
-class position
-{
-public:
-	int x;
-	int y;
-	void GetPos(int _x, int y);
-};
+bool CheckCollision(SDL_Rect a, SDL_Rect b);
+static vector <SDL_Rect> posPile;
