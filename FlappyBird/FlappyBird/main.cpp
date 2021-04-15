@@ -115,7 +115,8 @@ int main(int argc, char* argv[])
 			quit = true;
 		pile.loadWaterPile(gRenderer);
 		pile.DoRun(birdr);
-		if (pile.GetCollisionState())
+		if (pile.GetCollisionState1()==true|| pile.GetCollisionState2() == true|| pile.GetCollisionState3() == true
+			||pile.GetCollisionState4()==true||pile.GetCollisionState5()==true || pile.GetCollisionState6()==true)
 			quit = true;
 		pile.wUpdate(); 
 		

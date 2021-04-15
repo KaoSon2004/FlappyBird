@@ -32,16 +32,35 @@ bool waterPile::LoadImg(string path, SDL_Renderer* screen)
 void waterPile::Init()
 {
 	srand(time(NULL));
-	
+	wRect1.x = SCREEN_WIDTH + 0 * distance + 450;
+	wRect1.y = -200 - RanDom();
+	wRect1.w = wWidth;
+	wRect1.h = wHeight;
 
-	for (int i = 0; i < TOTAL_PILE; ++i)
-	{
-		SDL_Rect k;
-		SetPos( SCREEN_WIDTH+ i * distance + 450, -200-RanDom());
-		k = GetPos();
-		posPile.push_back(k);
-	}
+	wRect2.x = SCREEN_WIDTH + 1 * distance + 450;
+	wRect2.y = -200 - RanDom();
+	wRect2.w = wWidth;
+	wRect2.h = wHeight;
+
+	wRect3.x = SCREEN_WIDTH + 2 * distance + 450;
+	wRect3.y = -200 - RanDom();
+	wRect3.w = wWidth;
+	wRect3.h = wHeight;
 	
+	wRect11.x = wRect1.x;
+	wRect11.y = wRect1.y + wHeight + space;
+	wRect11.w = wWidth;
+	wRect11.h = wHeight;
+
+	wRect21.x = wRect2.x;
+	wRect21.y = wRect2.y + wHeight + space;
+	wRect21.w = wWidth;
+	wRect21.h = wHeight;
+	
+	wRect31.x = wRect3.x;
+	wRect31.y = wRect3.y+wHeight+space;
+	wRect31.w = wWidth;
+	wRect31.h = wHeight;
 }
 void waterPile::Free()
 {
@@ -56,20 +75,29 @@ void waterPile::Free()
 void waterPile::loadWaterPile(SDL_Renderer* screen)
 {
 	
-	for (int i = 0; i < TOTAL_PILE;i++)
-	{
-		if (posPile[i].x <= SCREEN_WIDTH && posPile[i].x > -getWidth())
+		if (wRect1.x <= SCREEN_WIDTH && wRect1.x > -getWidth())
 		{
-			wRender(screen, posPile[i].x, posPile[i].y);
-			wRender(screen, posPile[i].x, posPile[i].y + getHeight() + space, 180);
-			 
-			
+			wRender(screen, wRect1.x, wRect1.y);
+			wRender(screen, wRect11.x, wRect11.y, 180);
+		}
+
+
+		if (wRect2.x <= SCREEN_WIDTH && wRect2.x > -getWidth())
+		{
+			wRender(screen, wRect2.x, wRect2.y);
+			wRender(screen, wRect21.x, wRect21.y, 180);
 		}
 		
+
+		if (wRect3.x <= SCREEN_WIDTH && wRect3.x > -getWidth())
+		{
+			wRender(screen, wRect3.x, wRect3.y);
+			wRender(screen, wRect31.x, wRect31.y, 180);
+		}
 		
 	
 		
-	}
+
 	
 }
 void waterPile::wRender(SDL_Renderer* screen,int x, int y, int angle, SDL_Rect* clip, SDL_RendererFlip flip)
@@ -88,27 +116,43 @@ void waterPile::wRender(SDL_Renderer* screen,int x, int y, int angle, SDL_Rect* 
 void waterPile::wUpdate()
 {
 	
-		for (int j = 0; j < TOTAL_PILE; ++j)
+
+		if (wRect1.x < -getWidth())
 		{
-			if (posPile[j].x < -getWidth())
-			{
-
-				posPile[j].y = -200-RanDom(); 
-				SetYPos(posPile[j].y);
-				posPile[j].x = posPile[(j + TOTAL_PILE - 1) % TOTAL_PILE].x + distance;
-			}
-
+			wRect1.x = wRect3.x + distance;
+			wRect1.y = -200 - RanDom();
+			wRect11.y = wRect1.y + wHeight + space;
 		}
+		if (wRect2.x < -getWidth())
+		{
+			wRect2.x = wRect1.x + distance;
+			wRect2.y = -200 - RanDom();
+			wRect21.y = wRect2.y + wHeight + space;
+		}
+		if (wRect3.x < -getWidth())
+		{
+			wRect3.x = wRect2.x + distance;
+			wRect3.y = -200 - RanDom();
+			wRect31.y = wRect3.y + wHeight + space;
+		}
+
 	
 }
 void waterPile::DoRun(SDL_Rect player)
 {
-	for (int i = 0; i < TOTAL_PILE; i++)
-	{
-		posPile[i].x += xval;
-		SetXPos(posPile[i].x);
-		col = CheckCollision(player, wRect);
-	}
+
+	wRect1.x += xval;
+	wRect2.x += xval;
+	wRect3.x += xval;
+	wRect11.x += xval;
+	wRect21.x += xval;
+	wRect31.x += xval;
+	col1 = CheckCollision(wRect1, player);
+	col2 = CheckCollision(wRect2, player);
+	col3 = CheckCollision(wRect3, player);
+	col4 = CheckCollision(wRect11, player);
+	col5 = CheckCollision(wRect21, player);
+	col6 = CheckCollision(wRect31, player);
 
 	
 }
