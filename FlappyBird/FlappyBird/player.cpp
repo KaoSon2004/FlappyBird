@@ -1,7 +1,9 @@
 #include "Player.h"
 Bird::Bird()
 {
-
+	isDie = false;
+	xval = 0;
+	yval = 0;
 	
 
 }
@@ -11,7 +13,8 @@ Bird::~Bird()
 }
 void Bird::HandleInputAction(SDL_Event e, SDL_Renderer* screen)
 {
-
+	if (isDie == false)
+	{
 		if (e.type == SDL_KEYDOWN)
 		{
 			switch (e.key.keysym.sym)
@@ -20,11 +23,15 @@ void Bird::HandleInputAction(SDL_Event e, SDL_Renderer* screen)
 			{
 				if ((birdrect.y) <= 0)
 					yval = 5;
-				else
+				else if (birdrect.y>=0&&birdrect.y<=SCREEN_HEIGHT)
 				{
 					yval = -15;
 				}
-				
+				else if (isDie == true)
+				{
+					yval = 5;
+				}
+
 
 			}
 			}
@@ -37,18 +44,19 @@ void Bird::HandleInputAction(SDL_Event e, SDL_Renderer* screen)
 			case SDLK_UP:
 			{
 				yval = 5;
-	
 			}
 			break;
 			}
 		}
-		else 
+		else
 		{
 			yval = 5;
 
 		}
-	
-	
+
+
+	}
+
 
 
 }
@@ -84,13 +92,27 @@ void Bird::Free()
 		bird = NULL;
 	}
 }
+
 void Bird::DoFalling(SDL_Renderer* des)
 {
+	if (isDie == false)
+	{
 		birdrect.y += yval;
 		SetRect(birdrect.x, birdrect.y);
 		if (birdrect.y >= (SCREEN_HEIGHT - birdrect.h))
+		{
 			isDie = true;
-
+			yval = 0;
+		}
+	}
+	else if (isDie==true)
+	{
+		
+		if (birdrect.y <= (SCREEN_HEIGHT - birdrect.h))
+		{
+			birdrect.y += 5;
+		}
+	}
 }
 
 

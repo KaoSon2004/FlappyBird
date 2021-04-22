@@ -15,10 +15,13 @@ public:
 
 
 	void DoFalling(SDL_Renderer* des);
-	bool GetFalling() const { return isFalling; }
-	void SetFalling(bool falling) { isFalling = falling; }
-	void DoGround(SDL_Renderer* screen);
-	bool GetIsDie() const { return isDie; }
+	void Move();
+	
+
+	
+	bool GetIsDie() { return isDie; }
+	void SetIsDie(bool die) { isDie = die;}
+	void SetYVal(int y) { yval = y; }
 private:
 	// bước nhảy
 
@@ -27,8 +30,7 @@ private:
 	//vị trí hiện tại
 	float xpos;
 	float ypos;
-	bool isFalling;
-	bool isDie = false;
+	bool isDie;
 	SDL_Texture* bird;
 	SDL_Rect birdrect;
 

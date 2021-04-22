@@ -27,6 +27,8 @@ public:
 	void SetXPos(int x) { wRect.x = x;}
 	void SetYPos(int y) { wRect.y = y; }
 	
+	void SetXVal(int x) { xval = x; }
+	bool GetScore(SDL_Rect player);
 private:
 	SDL_Rect wRect;
 	SDL_Rect wRect1;
@@ -47,5 +49,5 @@ private:
 	bool col5 = false;
 	bool col6 = false;
 	int xval = -4;
-
+	bool checkpass = false;
 };

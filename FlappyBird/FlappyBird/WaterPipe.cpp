@@ -121,18 +121,24 @@ void waterPile::wUpdate()
 		{
 			wRect1.x = wRect3.x + distance;
 			wRect1.y = -200 - RanDom();
+			
+			wRect11.x = wRect1.x;
 			wRect11.y = wRect1.y + wHeight + space;
 		}
 		if (wRect2.x < -getWidth())
 		{
 			wRect2.x = wRect1.x + distance;
 			wRect2.y = -200 - RanDom();
+			
+			wRect21.x = wRect2.x;
 			wRect21.y = wRect2.y + wHeight + space;
 		}
 		if (wRect3.x < -getWidth())
 		{
 			wRect3.x = wRect2.x + distance;
 			wRect3.y = -200 - RanDom();
+			
+			wRect31.x = wRect3.x;
 			wRect31.y = wRect3.y + wHeight + space;
 		}
 
@@ -166,4 +172,16 @@ void waterPile::SetPos(int x, int y)
 {
 	wRect.x = x;
 	wRect.y = y;
+}
+bool waterPile::GetScore(SDL_Rect player)
+{
+	if ((player.x > (wRect1.x + wWidth)&&player.x<(wRect1.x+wWidth+5))
+	|| (player.x > (wRect2.x + wWidth)&&player.x<(wRect2.x+wWidth+5)) 
+	|| (player.x > (wRect3.x + wWidth)&&player.x<(wRect3.x+wWidth+5)))
+		checkpass = true;
+	else
+	{
+		checkpass = false;
+	}
+	return checkpass;
 }
