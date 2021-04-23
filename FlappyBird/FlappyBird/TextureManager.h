@@ -13,5 +13,4 @@ public:
 	bool LoadImg(string path, SDL_Renderer* screen);
 	void Render(SDL_Renderer* des, SDL_Rect* clip=NULL);
 	void Free();
-
 };

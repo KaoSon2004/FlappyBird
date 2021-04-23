@@ -111,8 +111,10 @@ int main(int argc, char* argv[])
 	const int  frameDelay = 1000 / FPS;
 	Uint32 frameStart;
 	int frameTime;
+	SDL_Delay(2000);
 	while (!quit)
 	{
+		
 		frameStart = SDL_GetTicks();
 		
 		while (SDL_PollEvent(&gEvent) != 0)

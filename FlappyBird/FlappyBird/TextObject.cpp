@@ -1,10 +1,10 @@
 #include "TextObject.h"
 TextObject::TextObject()
 {
-	text_coLor_.r = 255;
-	text_coLor_.g = 255;
-	text_coLor_.b = 255;
-	texture_ = NULL;
+	textCoLor.r = 255;
+	textCoLor.g = 255;
+	textCoLor.b = 255;
+	tTexture = NULL;
 }
 TextObject::~TextObject()
 {
@@ -12,30 +12,30 @@ TextObject::~TextObject()
 }
 bool TextObject::loadFromtRenderText(TTF_Font* font, SDL_Renderer* screen)
 {
-	SDL_Surface* text_surface = TTF_RenderText_Solid(font, str_val_.c_str(), text_coLor_);
+	SDL_Surface* text_surface = TTF_RenderText_Solid(font, strVal.c_str(), textCoLor);
 	if (text_surface)
 	{
-		texture_ = SDL_CreateTextureFromSurface(screen, text_surface);
-		width_ = text_surface->w;
-		height_ = text_surface->h;
+		tTexture = SDL_CreateTextureFromSurface(screen, text_surface);
+		tWidth = text_surface->w;
+		tHeight = text_surface->h;
 		SDL_FreeSurface(text_surface);
 
 	}
-	return texture_ != NULL;
+	return tTexture != NULL;
 }
 void TextObject::Free()
 {
-	if (texture_ != NULL)
+	if (tTexture != NULL)
 	{
-		SDL_DestroyTexture(texture_);
-		texture_ = NULL;
+		SDL_DestroyTexture(tTexture);
+		tTexture = NULL;
 	}
 }
 void TextObject::SetColor(Uint8 red, Uint8 green, Uint8 blue)
 {
-	text_coLor_.r = red;
-	text_coLor_.g = green;
-	text_coLor_.b = blue;
+	textCoLor.r = red;
+	textCoLor.g = green;
+	textCoLor.b = blue;
 
 }
 void TextObject::SetColor(int type)
@@ -43,26 +43,26 @@ void TextObject::SetColor(int type)
 	if (type==RED_TEXT)
 	{
 		SDL_Color color = { 255,0,0 };
-		text_coLor_ = color;
+		textCoLor = color;
 	}
 	else if (type == WHITE_TEXT)
 	{
 		SDL_Color color = { 255,255,255 };
-		text_coLor_ = color;
+		textCoLor = color;
 	}
 	else if (type == BLACK_TEXT)
 	{
 		SDL_Color color = { 0,0,0 };
-		text_coLor_ = color;
+		textCoLor = color;
 	}
 }
-void TextObject::RenderText(SDL_Renderer* screen, int xp, int yp, SDL_Rect* clip , double angle , SDL_Point* center , SDL_RendererFlip flip )
+void TextObject::RenderText(SDL_Renderer* screen, int xpos, int ypos, SDL_Rect* clip , double angle , SDL_Point* center , SDL_RendererFlip flip )
 {
-	SDL_Rect renderQuad = { xp,yp,width_,height_ };
+	SDL_Rect renderQuad = { xpos,ypos,tWidth,tHeight };
 	if (clip != NULL)
 	{
 		renderQuad.w = clip->w;
 		renderQuad.h = clip->h;
 	}
-	SDL_RenderCopyEx(screen, texture_,clip, &renderQuad, angle, center, flip);
+	SDL_RenderCopyEx(screen, tTexture,clip, &renderQuad, angle, center, flip);
 }

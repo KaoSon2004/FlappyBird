@@ -16,16 +16,16 @@ public:
 	void Free();
 	void SetColor(Uint8 red, Uint8 green, Uint8 blue);
 	void SetColor(int type);
-	void RenderText(SDL_Renderer* screen, int xp, int yp, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
-	int GetWidth() { return width_; }
-	int GetHeight() { return height_; }
-	void SetText(string& text) { str_val_ = text; }
-	string GetText() { return str_val_; }
+	void RenderText(SDL_Renderer* screen, int xpos, int ypos, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+	int GetWidth() { return tWidth; }
+	int GetHeight() { return tHeight; }
+	void SetText(string& text) { strVal = text; }
+	string GetText() { return strVal; }
 private:
-	string str_val_;
-	SDL_Color text_coLor_;
-	SDL_Texture* texture_;
-	int width_;
-	int height_;
+	string strVal;
+	SDL_Color textCoLor;
+	SDL_Texture* tTexture;
+	int tWidth;
+	int tHeight;
 
 };
