@@ -2,7 +2,7 @@
 #include "CommonFunction.h"
 class TextureManager
 {
-protected:
+private:
 	SDL_Texture* Mtexture;
 	SDL_Rect rect_;
 public:

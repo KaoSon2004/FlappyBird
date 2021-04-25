@@ -7,11 +7,15 @@
 TextureManager gBackGround;
 waterPile pile;
 TTF_Font* font_time;
+Mix_Music* theme = NULL;
+Mix_Chunk* ting = NULL;
+Mix_Chunk* punch = NULL;
+Mix_Music* gameover = NULL;
 bool Init()
 {
 	bool success = true;
 
-	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+	if ((SDL_Init(SDL_INIT_EVERYTHING)|SDL_INIT_AUDIO) < 0	)
 	{
 		success = false;
 		cout << "Couldn't initialize SDL" << endl;
@@ -46,6 +50,11 @@ bool Init()
 					cout << "Error" << endl;
 					success = false;
 				}
+				if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+				{
+					cout << "SDL couldn't initialize " << endl;
+					success = false;
+				}
 			}
 		}
 	}
@@ -61,6 +70,23 @@ bool LoadWaterPile()
 	bool ret1 = pile.LoadImg("top.png", gRenderer);
 
 	return ret1;
+}
+bool LoadMusic()
+{
+	theme = Mix_LoadMUS("theme.wav");
+	if (theme == NULL)
+		return false;
+	ting = Mix_LoadWAV("ting.wav");
+	if (ting == NULL)
+		return false;
+	punch = Mix_LoadWAV("punch.wav");
+	if (punch == NULL)
+		return false;
+	gameover = Mix_LoadMUS("gameover.wav");
+	if (gameover == NULL)
+		return false;
+
+	return true;
 }
 int ShowMeNu(SDL_Renderer* screen, TTF_Font* font, string menu1, string menu2)
 {
@@ -86,9 +112,13 @@ int ShowMeNu(SDL_Renderer* screen, TTF_Font* font, string menu1, string menu2)
 	
 
 	SDL_Event event;
+	const int FPS = 60;
+	const int  frameDelay = 1000 / FPS;
+	Uint32 frameStart;
+	int frameTime;
 	while (1)
 	{
-		time = SDL_GetTicks();
+		frameStart = SDL_GetTicks();
 		while(SDL_PollEvent(&event)!=0)
 		{
 			switch (event.type)
@@ -134,6 +164,7 @@ int ShowMeNu(SDL_Renderer* screen, TTF_Font* font, string menu1, string menu2)
 					{
 						textObject[0].Free();
 						textObject[1].Free();
+						
 						return i;
 					}
 				}
@@ -154,8 +185,11 @@ int ShowMeNu(SDL_Renderer* screen, TTF_Font* font, string menu1, string menu2)
 			pos[i].h = textObject[i].GetHeight();
 		}
 		SDL_RenderPresent(screen);
-		if (1000 / 30 > (SDL_GetTicks() - time))
-			SDL_Delay(1000 / 30 - (SDL_GetTicks() - time));
+		frameTime = SDL_GetTicks() - frameStart;
+		if (frameDelay > frameTime)
+		{
+			SDL_Delay(frameDelay - frameTime);
+		}
 	}
 }
 void close ()
@@ -169,6 +203,8 @@ void close ()
 
 int main(int argc, char* argv[])
 {
+
+	bool PlayAgain = false;
 	if (Init() == false)
 	{
 		return -1;
@@ -178,13 +214,16 @@ int main(int argc, char* argv[])
 	{
 		return -1;
 	}
-	bool quit = false;
-		int retMenu = ShowMeNu(gRenderer, font_time, "Play Game", "Exit");
-		if (retMenu == 1)
-			quit = true; 
+	if (LoadMusic() == false)
+		return -1;
+
+		bool limit = true;
+
+
+	do
+	{
 		Bird Player;
 		Bird Die;
-
 		bool ret = Player.loadImg("bird.png", gRenderer);
 		bool ret1 = Die.loadImg("die.png", gRenderer);
 		if (ret == false || ret1 == false)
@@ -195,10 +234,26 @@ int main(int argc, char* argv[])
 		{
 			return -1;
 		}
-		Player.SetRect(100, 100);
-		
-		pile.Init();
+		bool quit = false;
+		if (PlayAgain == false)
+		{
+			int retMenu = ShowMeNu(gRenderer, font_time, "Play Game", "Exit");
+			if (retMenu == 1)
+			{
+				quit = true;
+				PlayAgain = false;
+			}
+			else 
+			{
+				Mix_PlayMusic(theme, -1);
+			}
+		}
 
+
+		Player.SetRect(100, 100);
+
+		pile.Init();
+		pile.SetXVal(-4);
 		TextObject mark_game;
 		mark_game.SetColor(TextObject::WHITE_TEXT);
 		Uint32 mark_value = 0;
@@ -217,6 +272,7 @@ int main(int argc, char* argv[])
 				if (gEvent.type == SDL_QUIT)
 				{
 					quit = true;
+					PlayAgain = false;
 				}
 
 				Player.HandleInputAction(gEvent, gRenderer);
@@ -236,14 +292,16 @@ int main(int argc, char* argv[])
 			if (pile.GetCollisionState1() == true || pile.GetCollisionState2() == true || pile.GetCollisionState3() == true
 				|| pile.GetCollisionState4() == true || pile.GetCollisionState5() == true || pile.GetCollisionState6() == true)
 			{
+				Mix_PlayChannel(-1, punch, 0);
 				Player.SetIsDie(true);
 			}
+
 			if (Player.GetIsDie())
 			{
 				pile.SetXVal(0);
-				Player.Free();
 				Die.SetRect(birdr.x, birdr.y - 5);
 				Die.Show(gRenderer);
+				Mix_PauseMusic();
 			}
 
 			pile.wUpdate();
@@ -251,7 +309,11 @@ int main(int argc, char* argv[])
 
 
 			if (getScore)
+			{
 				mark_value++;
+				Mix_PlayChannel(-1, ting, 0);
+			}
+
 
 			string val_str_mark = to_string(mark_value);
 			string strMark("Mark: ");
@@ -260,29 +322,44 @@ int main(int argc, char* argv[])
 			mark_game.loadFromtRenderText(font_time, gRenderer);
 			mark_game.RenderText(gRenderer, SCREEN_WIDTH - 200, 30);
 			SDL_RenderPresent(gRenderer);
-			bool gameOver = Player.GameOver();
+			bool gameOver = false;
+			gameOver = Player.GameOver();
 			if (gameOver == true)
 			{
+				Mix_PlayMusic(gameover, -1);
 				int retMenu1 = ShowMeNu(gRenderer, font_time, "Play again", "Exit");
 				if (retMenu1 == 1)
 				{
 					quit = true;
+					PlayAgain = false;
 				}
-				else
+				else if (retMenu1==0)
 				{
-
+					PlayAgain = true;
+					limit = false;
+					quit = true;
+					Mix_PlayMusic(theme, -1);
 				}
 			}
-
-			frameTime = SDL_GetTicks() - frameStart;
-			if (frameDelay > frameTime)
+			if (limit)
 			{
-				SDL_Delay(frameDelay - frameTime);
+				frameTime = SDL_GetTicks() - frameStart;
+				if (frameDelay > frameTime)
+				{
+					SDL_Delay(frameDelay - frameTime);
+				}
 			}
+			if (PlayAgain == true)
+			{
+				limit = true;
+			}
+				
 			//limit
 
 		}
-	
+		
+	}
+	while (PlayAgain);
 	close();
 	return 0;
 }

@@ -27,11 +27,8 @@ public:
 private:
 	// bước nhảy
 
-	float xval;
 	float yval;
 	//vị trí hiện tại
-	float xpos;
-	float ypos;
 	bool isDie;
 	SDL_Texture* bird;
 	SDL_Rect birdrect;

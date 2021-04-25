@@ -2,10 +2,8 @@
 Bird::Bird()
 {
 	isDie = false;
-	xval = 5;
 	yval = 5;
-	
-
+	bird = NULL;
 }
 Bird::~Bird()
 {
@@ -118,6 +116,7 @@ bool Bird::GameOver()
 {
 	if (birdrect.y + birdrect.h >= SCREEN_HEIGHT)
 	{
+		isDie = true;
 		return true;
 	}
 	

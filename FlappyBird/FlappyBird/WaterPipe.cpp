@@ -4,8 +4,17 @@
 
 waterPile::waterPile()
 {
-
+	col1 = false;
+	col2 = false;
+	col3 = false;
+	col4 = false;
+	col5 = false;
+	col6 = false;
 	wTexture = NULL;
+	xval = -4;
+	distance = 400;
+	space = 200;
+	checkpass = false;
 }
 waterPile::~waterPile()
 {
@@ -175,9 +184,9 @@ void waterPile::SetPos(int x, int y)
 }
 bool waterPile::GetScore(SDL_Rect player)
 {
-	if ((player.x > (wRect1.x + wWidth)&&player.x<(wRect1.x+wWidth+5))
-	|| (player.x > (wRect2.x + wWidth)&&player.x<(wRect2.x+wWidth+5)) 
-	|| (player.x > (wRect3.x + wWidth)&&player.x<(wRect3.x+wWidth+5)))
+	if ((player.x+1 > (wRect1.x + wWidth)&&player.x<(wRect1.x+wWidth+4))
+	|| (player.x +1> (wRect2.x + wWidth)&&player.x<(wRect2.x+wWidth+4)) 
+	|| (player.x +1> (wRect3.x + wWidth)&&player.x<(wRect3.x+wWidth+4)))
 		checkpass = true;
 	else
 	{

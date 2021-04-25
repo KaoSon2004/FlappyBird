@@ -24,6 +24,15 @@ public:
 	bool GetCollisionState4() { return col4; }
 	bool GetCollisionState5() { return col5; }
 	bool GetCollisionState6() { return col6; }
+	void SetCollisionState(bool a) {
+		col1 = a;
+		col2 = a;
+		col3 = a;
+		col4 = a;
+		col5 = a;
+		col6 = a;
+
+	}
 	void SetXPos(int x) { wRect.x = x;}
 	void SetYPos(int y) { wRect.y = y; }
 	
@@ -42,12 +51,12 @@ private:
 	SDL_Texture* wTexture;
 	int distance = 400;
 	int space = 200;
-	bool col1 = false;
-	bool col2 = false;
-	bool col3 = false;
-	bool col4 = false;
-	bool col5 = false;
-	bool col6 = false;
-	int xval = -4;
-	bool checkpass = false;
+	bool col1;
+	bool col2;
+	bool col3;
+	bool col4;
+	bool col5;
+	bool col6;
+	int xval;
+	bool checkpass;
 };
