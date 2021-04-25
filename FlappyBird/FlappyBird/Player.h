@@ -22,6 +22,8 @@ public:
 	bool GetIsDie() { return isDie; }
 	void SetIsDie(bool die) { isDie = die;}
 	void SetYVal(int y) { yval = y; }
+
+	bool GameOver();
 private:
 	// bước nhảy
 

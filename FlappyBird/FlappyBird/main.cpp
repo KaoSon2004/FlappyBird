@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "WaterPile.h"
 #include "TextObject.h"
+#include "TextObject.h"
 TextureManager gBackGround;
 waterPile pile;
 TTF_Font* font_time;
@@ -61,6 +62,102 @@ bool LoadWaterPile()
 
 	return ret1;
 }
+int ShowMeNu(SDL_Renderer* screen, TTF_Font* font, string menu1, string menu2)
+{
+	Uint32 time = 0;
+	int x = 0;
+	int y = 0;
+	const int numMenu = 2;
+	SDL_Texture* menu[numMenu];
+	bool selected[numMenu] = { 0,0 };
+	SDL_Color color[2] = { { 255, 255, 255 },{ 255, 0, 0 } };
+	TextObject textObject[numMenu];
+	textObject[0].SetText(menu1);
+	textObject[0].SetColor(color[0].r, color[0].g, color[0].b);
+	textObject[0].loadFromtRenderText(font, screen);
+	textObject[1].SetText(menu2);
+	textObject[1].SetColor(color[0].r, color[0].g, color[0].b);
+	textObject[1].loadFromtRenderText(font, screen);
+	SDL_Rect pos[numMenu];
+	pos[0].x = SCREEN_WIDTH/2-20;
+	pos[0].y = SCREEN_HEIGHT/2;
+	pos[1].x = SCREEN_WIDTH /2-20;
+	pos[1].y = SCREEN_HEIGHT /2+20;
+	
+
+	SDL_Event event;
+	while (1)
+	{
+		time = SDL_GetTicks();
+		while(SDL_PollEvent(&event)!=0)
+		{
+			switch (event.type)
+			{
+			case SDL_QUIT:
+				textObject[0].Free();
+				textObject[1].Free();
+				return 1;
+			case SDL_MOUSEMOTION:
+				x = event.motion.x;
+				y = event.motion.y;
+				for (int i = 0; i < numMenu; i++)
+				{
+					if (x >= pos[i].x && x <= pos[i].x + pos[i].w &&
+						y >= pos[i].y && y <= pos[i].y + pos[i].h)
+					{
+						if (selected[i]==false)
+						{
+							selected[i] = true;
+							textObject[i].SetColor(color[1].r, color[1].g, color[1].b);
+							textObject[i].loadFromtRenderText(font, screen);
+
+						}
+					}
+					else
+					{
+						if (selected[i] == true)
+						{
+							selected[i] = false;
+							textObject[i].SetColor(color[0].r, color[0].g, color[0].b);
+							textObject[i].loadFromtRenderText(font, screen);
+						}
+					}
+				}
+				break;
+			case SDL_MOUSEBUTTONDOWN:
+				x = event.button.x;
+				y = event.button.y;
+				for (int i = 0; i < numMenu; i++)
+				{
+					if (x >= pos[i].x && x <= pos[i].x + pos[i].w &&
+						y >= pos[i].y && y <= pos[i].y + pos[i].h)
+					{
+						textObject[0].Free();
+						textObject[1].Free();
+						return i;
+					}
+				}
+				break;	
+			case SDL_KEYDOWN:
+				if (event.key.keysym.sym == SDLK_ESCAPE)
+				{
+					textObject[0].Free();
+					textObject[1].Free();
+					return 1;
+				}
+			}
+		}
+		for (int i = 0; i < numMenu; ++i)
+		{
+			textObject[i].RenderText(screen, pos[i].x, pos[i].y);
+			pos[i].w = textObject[i].GetWidth();
+			pos[i].h = textObject[i].GetHeight();
+		}
+		SDL_RenderPresent(screen);
+		if (1000 / 30 > (SDL_GetTicks() - time))
+			SDL_Delay(1000 / 30 - (SDL_GetTicks() - time));
+	}
+}
 void close ()
 {
 	SDL_DestroyRenderer(gRenderer);
@@ -77,103 +174,115 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
-	if (LoadBackGround()==false)
+	if (LoadBackGround() == false)
 	{
 		return -1;
 	}
-
-	Bird Player;
-	Bird Die;
-	
-	bool ret = Player.loadImg("bird.png", gRenderer);
-	bool ret1 = Die.loadImg("die.png", gRenderer);
-	if (ret == false||ret1==false)
-	{
-		return -1;
-	}
-	Player.SetRect(100, 100);
-	if (!LoadWaterPile())
-	{
-		return -1;
-	}
-	pile.Init();
-
 	bool quit = false;
+		int retMenu = ShowMeNu(gRenderer, font_time, "Play Game", "Exit");
+		if (retMenu == 1)
+			quit = true; 
+		Bird Player;
+		Bird Die;
 
-	TextObject time_game;
-	time_game.SetColor(TextObject::WHITE_TEXT);
-
-	TextObject mark_game;
-	mark_game.SetColor(TextObject::WHITE_TEXT);
-	Uint32 mark_value = 0;
-
-	const int FPS = 60;
-	const int  frameDelay = 1000 / FPS;
-	Uint32 frameStart;
-	int frameTime;
-	SDL_Delay(2000);
-	while (!quit)
-	{
-		
-		frameStart = SDL_GetTicks();
-		
-		while (SDL_PollEvent(&gEvent) != 0)
+		bool ret = Player.loadImg("bird.png", gRenderer);
+		bool ret1 = Die.loadImg("die.png", gRenderer);
+		if (ret == false || ret1 == false)
 		{
-			if (gEvent.type == SDL_QUIT)
+			return -1;
+		}
+		if (!LoadWaterPile())
+		{
+			return -1;
+		}
+		Player.SetRect(100, 100);
+		
+		pile.Init();
+
+		TextObject mark_game;
+		mark_game.SetColor(TextObject::WHITE_TEXT);
+		Uint32 mark_value = 0;
+
+		const int FPS = 60;
+		const int  frameDelay = 1000 / FPS;
+		Uint32 frameStart;
+		int frameTime;
+		while (!quit)
+		{
+
+			frameStart = SDL_GetTicks();
+
+			while (SDL_PollEvent(&gEvent) != 0)
 			{
-				quit = true;
-			}
-			
+				if (gEvent.type == SDL_QUIT)
+				{
+					quit = true;
+				}
+
 				Player.HandleInputAction(gEvent, gRenderer);
-			
+
+
+			}
+
+			SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+			SDL_RenderClear(gRenderer);
+			gBackGround.Render(gRenderer, NULL);
+			Player.DoFalling(gRenderer);
+			Player.Show(gRenderer);
+			SDL_Rect birdr = Player.GetRect();
+			pile.loadWaterPile(gRenderer);
+			pile.DoRun(birdr);
+
+			if (pile.GetCollisionState1() == true || pile.GetCollisionState2() == true || pile.GetCollisionState3() == true
+				|| pile.GetCollisionState4() == true || pile.GetCollisionState5() == true || pile.GetCollisionState6() == true)
+			{
+				Player.SetIsDie(true);
+			}
+			if (Player.GetIsDie())
+			{
+				pile.SetXVal(0);
+				Player.Free();
+				Die.SetRect(birdr.x, birdr.y - 5);
+				Die.Show(gRenderer);
+			}
+
+			pile.wUpdate();
+			bool getScore = (pile.GetScore(birdr));
+
+
+			if (getScore)
+				mark_value++;
+
+			string val_str_mark = to_string(mark_value);
+			string strMark("Mark: ");
+			strMark += val_str_mark;
+			mark_game.SetText(strMark);
+			mark_game.loadFromtRenderText(font_time, gRenderer);
+			mark_game.RenderText(gRenderer, SCREEN_WIDTH - 200, 30);
+			SDL_RenderPresent(gRenderer);
+			bool gameOver = Player.GameOver();
+			if (gameOver == true)
+			{
+				int retMenu1 = ShowMeNu(gRenderer, font_time, "Play again", "Exit");
+				if (retMenu1 == 1)
+				{
+					quit = true;
+				}
+				else
+				{
+
+				}
+			}
+
+			frameTime = SDL_GetTicks() - frameStart;
+			if (frameDelay > frameTime)
+			{
+				SDL_Delay(frameDelay - frameTime);
+			}
+			//limit
 
 		}
-
-		SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
-		SDL_RenderClear(gRenderer);
-		gBackGround.Render(gRenderer, NULL);
-		Player.DoFalling(gRenderer);
-		Player.Show(gRenderer);
-		SDL_Rect birdr = Player.GetRect();
-		pile.loadWaterPile(gRenderer);
-		pile.DoRun(birdr);
-
-		if (pile.GetCollisionState1() == true || pile.GetCollisionState2() == true || pile.GetCollisionState3() == true
-		|| pile.GetCollisionState4() == true || pile.GetCollisionState5() == true || pile.GetCollisionState6() == true)
-		{
-			Player.SetIsDie(true);
-		}
-		if (Player.GetIsDie())
-		{
-			pile.SetXVal(0);
-			Player.Free();
-			Die.SetRect(birdr.x, birdr.y-5);
-			Die.Show(gRenderer);
-		}
-		
-		pile.wUpdate(); 
-		bool getScore = (pile.GetScore(birdr));
-
-
-		if (getScore)
-			mark_value++;
-
-		string val_str_mark = to_string(mark_value);
-		string strMark("Mark: ");
-		strMark += val_str_mark;
-		mark_game.SetText(strMark);
-		mark_game.loadFromtRenderText(font_time, gRenderer);
-		mark_game.RenderText(gRenderer, SCREEN_WIDTH - 200, 30);
-		SDL_RenderPresent(gRenderer);
-		frameTime = SDL_GetTicks() - frameStart;
-		if (frameDelay > frameTime)
-		{
-			SDL_Delay(frameDelay - frameTime);
-		}
-		//limit
-
-	}
-
+	
 	close();
 	return 0;
 }

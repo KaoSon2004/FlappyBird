@@ -9,6 +9,7 @@
 #include <time.h>
 #include <cstdlib>
 #include <ctime> 
+
 using namespace std;
 
 
@@ -26,4 +27,5 @@ const int COLOR_KEY_G = 255;
 const int COLOR_KEY_B = 255;
 
 bool CheckCollision(SDL_Rect a, SDL_Rect b);
+
 static int  score = 0;

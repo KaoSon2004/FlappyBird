@@ -2,8 +2,8 @@
 Bird::Bird()
 {
 	isDie = false;
-	xval = 0;
-	yval = 0;
+	xval = 5;
+	yval = 5;
 	
 
 }
@@ -114,7 +114,14 @@ void Bird::DoFalling(SDL_Renderer* des)
 		}
 	}
 }
-
+bool Bird::GameOver()
+{
+	if (birdrect.y + birdrect.h >= SCREEN_HEIGHT)
+	{
+		return true;
+	}
+	
+}
 
 
 

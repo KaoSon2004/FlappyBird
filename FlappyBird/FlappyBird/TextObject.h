@@ -19,7 +19,7 @@ public:
 	void RenderText(SDL_Renderer* screen, int xpos, int ypos, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 	int GetWidth() { return tWidth; }
 	int GetHeight() { return tHeight; }
-	void SetText(string& text) { strVal = text; }
+	void SetText(string text) { strVal = text; }
 	string GetText() { return strVal; }
 private:
 	string strVal;
