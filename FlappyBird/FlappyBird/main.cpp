@@ -4,6 +4,7 @@
 #include "WaterPile.h"
 #include "TextObject.h"
 #include "TextObject.h"
+#include "HighScore.h"
 TextureManager gBackGround;
 waterPile pile;
 TTF_Font* font_time;
@@ -11,6 +12,7 @@ Mix_Music* theme = NULL;
 Mix_Chunk* ting = NULL;
 Mix_Chunk* punch = NULL;
 Mix_Music* gameover = NULL;
+highScore highscore;
 bool Init()
 {
 	bool success = true;
@@ -88,7 +90,8 @@ bool LoadMusic()
 
 	return true;
 }
-int ShowMeNu(SDL_Renderer* screen, TTF_Font* font, string menu1, string menu2)
+
+int ShowMeNu(SDL_Renderer* screen, TTF_Font* font, string menu1, string menu2,int score)
 {
 	Uint32 time = 0;
 	int x = 0;
@@ -105,12 +108,20 @@ int ShowMeNu(SDL_Renderer* screen, TTF_Font* font, string menu1, string menu2)
 	textObject[1].SetColor(color[0].r, color[0].g, color[0].b);
 	textObject[1].loadFromtRenderText(font, screen);
 	SDL_Rect pos[numMenu];
-	pos[0].x = SCREEN_WIDTH/2-20;
+	pos[0].x = SCREEN_WIDTH/2-50;
 	pos[0].y = SCREEN_HEIGHT/2;
-	pos[1].x = SCREEN_WIDTH /2-20;
-	pos[1].y = SCREEN_HEIGHT /2+20;
+	pos[1].x = SCREEN_WIDTH /2-50;
+	pos[1].y = SCREEN_HEIGHT /2+50;
 	
-
+	TextObject highscore;
+	string str = "HiScore: ";
+	str = str + to_string(score);
+	highscore.SetText(str);
+	highscore.SetColor(color[0].r, color[0].g, color[0].b);
+	highscore.loadFromtRenderText(font, screen);
+	SDL_Rect scorePos;
+	scorePos.x = SCREEN_WIDTH / 2 - 60;
+	scorePos.y = 10;
 	SDL_Event event;
 	const int FPS = 60;
 	const int  frameDelay = 1000 / FPS;
@@ -126,6 +137,7 @@ int ShowMeNu(SDL_Renderer* screen, TTF_Font* font, string menu1, string menu2)
 			case SDL_QUIT:
 				textObject[0].Free();
 				textObject[1].Free();
+				highscore.Free();
 				return 1;
 			case SDL_MOUSEMOTION:
 				x = event.motion.x;
@@ -164,7 +176,7 @@ int ShowMeNu(SDL_Renderer* screen, TTF_Font* font, string menu1, string menu2)
 					{
 						textObject[0].Free();
 						textObject[1].Free();
-						
+						highscore.Free();
 						return i;
 					}
 				}
@@ -174,6 +186,7 @@ int ShowMeNu(SDL_Renderer* screen, TTF_Font* font, string menu1, string menu2)
 				{
 					textObject[0].Free();
 					textObject[1].Free();
+					highscore.Free();
 					return 1;
 				}
 			}
@@ -184,6 +197,7 @@ int ShowMeNu(SDL_Renderer* screen, TTF_Font* font, string menu1, string menu2)
 			pos[i].w = textObject[i].GetWidth();
 			pos[i].h = textObject[i].GetHeight();
 		}
+		highscore.RenderText(screen, scorePos.x, scorePos.y);
 		SDL_RenderPresent(screen);
 		frameTime = SDL_GetTicks() - frameStart;
 		if (frameDelay > frameTime)
@@ -216,12 +230,12 @@ int main(int argc, char* argv[])
 	}
 	if (LoadMusic() == false)
 		return -1;
-
-		bool limit = true;
-
-
+	bool limit = true;
 	do
 	{
+
+		if (highscore.loadFromFile("highscore.txt") == false)
+			return -1;
 		Bird Player;
 		Bird Die;
 		bool ret = Player.loadImg("bird.png", gRenderer);
@@ -235,9 +249,10 @@ int main(int argc, char* argv[])
 			return -1;
 		}
 		bool quit = false;
+		
 		if (PlayAgain == false)
 		{
-			int retMenu = ShowMeNu(gRenderer, font_time, "Play Game", "Exit");
+			int retMenu = ShowMeNu(gRenderer, font_time, "Play Game", "Exit",highscore.GetScore());
 			if (retMenu == 1)
 			{
 				quit = true;
@@ -299,6 +314,7 @@ int main(int argc, char* argv[])
 			if (Player.GetIsDie())
 			{
 				pile.SetXVal(0);
+				Player.Free();
 				Die.SetRect(birdr.x, birdr.y - 5);
 				Die.Show(gRenderer);
 				Mix_PauseMusic();
@@ -326,8 +342,15 @@ int main(int argc, char* argv[])
 			gameOver = Player.GameOver();
 			if (gameOver == true)
 			{
+				
+				if (mark_value > highscore.GetScore())
+				{
+					highscore.saveScore(mark_value);
+					highscore.SetScore(mark_value);
+				}
+					
 				Mix_PlayMusic(gameover, -1);
-				int retMenu1 = ShowMeNu(gRenderer, font_time, "Play again", "Exit");
+				int retMenu1 = ShowMeNu(gRenderer, font_time, "Play again", "Exit",highscore.GetScore());
 				if (retMenu1 == 1)
 				{
 					quit = true;

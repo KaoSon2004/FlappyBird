@@ -143,6 +143,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CommonFunction.cpp" />
+    <ClCompile Include="HighScore.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="TextObject.cpp" />
@@ -151,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommonFunction.h" />
+    <ClInclude Include="HighScore.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="TextObject.h" />
     <ClInclude Include="TextureManager.h" />

@@ -1,4 +1,5 @@
-﻿  main.cpp
+﻿  player.cpp
 D:\FlappyBird\FlappyBird\Player.h(24,31): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-D:\FlappyBird\FlappyBird\main.cpp(97,15): warning C4101: 'menu': unreferenced local variable
+D:\FlappyBird\FlappyBird\player.cpp(59,21): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
+D:\FlappyBird\FlappyBird\player.cpp(85): warning C4715: 'Bird::GameOver': not all control paths return a value
   FlappyBird.vcxproj -> D:\FlappyBird\x64\Debug\FlappyBird.exe
